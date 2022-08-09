@@ -15,7 +15,7 @@ This project intended on examining the personnel rosters for a large corporation
 
 Six supplied CSV files containing various employee data were used to map the ERD diagram pictured in the schema below and supply this project with the information used to conduct this analysis.
 
-SCHEMA PIC
+![](Data/EmployeeDB.png)
 
 A query was ran that joined the Employees table (listing the employee number, first name, and last name) and the Titles table (listing the title, start date and end date). The employee birth date was filtered to only include employees nearing retirement age (1952 – 1955 in this analysis). A new table was subsequentially created  (Retirement Titles). 
 
@@ -33,8 +33,13 @@ ON e.emp_no = ti.emp_no
 WHERE (e.birth_date BETWEEN '1952-01-01' AND '1955-12-31')
 ORDER BY emp_no
 ;
-PIC
-The Retirement Titles table was then used to glean the employee number, first name, last name and title and was filtered to only include the current titles, thus removing the duplicates and creating the unique titles table. 
+```
+
+![](Data/retirement_titles_screenshot.png)
+
+The Retirement Titles table was then used to glean the employee number, first name, last name and title and was filtered to only include the current titles, thus removing the duplicates and creating the Unique Titles table. 
+
+```
 SELECT DISTINCT ON (emp_no) emp_no, first_name, last_name, title
 INTO unique_titles
 FROM retirement_titles
@@ -42,9 +47,11 @@ ORDER BY emp_no, from_date DESC
 ;
 ```
 
-PIC
+![](Data/unique_titles.png)
 
 Another query was written that retrieved the number of employees by their most recent job titles approaching potential retirement from the Unique Titles table. A new table, the Retiring Titles table, was created that groups the retiring employees by title in descending order to ascertain what departments and positions will incur the biggest loss from a mass retirement. It is observed that the sales and development departments will be the most affected by the loss of employees.
+
+```
 SELECT COUNT(title) count, title
 INTO retiring_titles
 FROM unique_titles
@@ -53,7 +60,7 @@ ORDER BY count DESC
 ;
 '''
 
-PIC
+![](Data/retiring_titles_screenshot.png) 
 
 To assess which retiring employees were qualified for the organization’s mentorship program, a new analysis was conducted that used the employees’ ages and employment duration as determining metrics. A new table was created, the Mentorship Eligibility table, using the query below. 
 
@@ -77,7 +84,7 @@ ORDER BY emp_no, ti.from_date DESC
 ;
 ```
 
-PIC 
+![](Data/membership_eligablility_screenshot.png) 
 
 Further examination of the organization’s eligible mentors was conducted to determine that most of the retirees eligible to mentor are Senior Engineers (529 at 34%) and Senior Staff agents (569 at 37%). The remaining 29% of eligible mentors are Engineers, General Staff, Technique Leaders and Assistant Engineers.
 
@@ -89,7 +96,7 @@ GROUP BY (title)
 ORDER BY count DESC
 ```
 
-PIC
+![](Data/eligable_mentors_titles_screenshot.png) 
 
 Additional analysis was conducted by grouping the positions in demand by department as well as by title to determine where further mentorship and coverage would be needed. Two queries were written that create the Unique Titles Dept table as well as the Position Demand table. 
 
@@ -110,7 +117,7 @@ GROUP BY ut.dept_name, ut.title
 ORDER BY ut.dept_name DESC;
 ```
 
-PIC
+![](Data/position_demand_screenshot.png)
 
 #### Summary
 
