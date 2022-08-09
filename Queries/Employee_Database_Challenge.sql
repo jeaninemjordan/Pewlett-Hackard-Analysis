@@ -100,29 +100,24 @@ ORDER BY count DESC
 
 SELECT * FROM eligible_mentors_titles
 
--- Create list of current employees eligible for retirement 
-SELECT DISTINCT ON (emp_no)
-        ce.emp_no, 
-        ce.first_name,
-        ce.last_name,
-        ti.title,
-        ti.from_date,
-        ti.to_date
-INTO v
-FROM current_emp as ce
-INNER JOIN titles as ti
-ON ce.emp_no = ti.emp_no
-ORDER BY emp_no, from_date DESC
-;
+-- Creating unique titles by dept table 
+INTO unique_titles_dept
+FROM retirement_titles as rt	
+INNER JOIN dept_emp as de
+ON (rt.emp_no = de.emp_no)
+INNER JOIN departments as d 
+ON (d.dept_no = de.dept_no)
+ORDER BY rt.emp_no, rt.to_date DESC;
 
-SELECT * FROM retirement_eligibility_titles
+SELECT * FROM unique_titles_dept
 
--- Create a table with title counts for current employees eligible for retirement
-SELECT COUNT(title) count, title
-INTO current_employee_titles
-FROM retirement_eligibility_titles
-GROUP BY (title) 
-ORDER BY count DESC;
+-- Organizing positions demand/positions to fill by department
+SELECT ut.dept_name, ut.title, COUNT(ut.title) 
+INTO position_demand
+FROM (SELECT title, dept_name from unique_titles_dept) as ut
+GROUP BY ut.dept_name, ut.title
+ORDER BY ut.dept_name DESC;
 
-SELECT * FROM current_employee_titles
+SELECT * FROM position_demand
+
 
